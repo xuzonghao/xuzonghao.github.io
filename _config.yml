@@ -1,17 +1,17 @@
 # Site settings
-title: 范成志的博客
-email: jialei3@126.com
+title: 徐宗浩工作轨迹
+email: xuzonghao@126.com
 description: > # this means to ignore newlines until "baseurl:"
   Write an awesome description for your new site here. You can edit this
   line in _config.yml. It will appear in your document head meta (for
   Google search results) and in your feed.xml site description.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://jialeicui.github.io" # the base hostname & protocol for your site
+url: "http://xuzonghao.github.io" # the base hostname & protocol for your site
 twitter_username: jekyllrb
-github_username:  jialeicui
+github_username:  xuzonghao
 
 author :
-  name : 臭豆儿
+  name : 徐宗浩
 start_year: "2014"
 description_length: 200
 
