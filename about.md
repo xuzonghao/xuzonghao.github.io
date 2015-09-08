@@ -25,7 +25,7 @@ title: About
     </g>
 </svg>
 </span> 
-xuzonghao<span class="icon icon--github">
+虚空&&Works<span class="icon icon--github">
 <svg viewBox="0 0 16 16">
 	<g class="transform-group">
 	  <g transform="translate(-1, 15) scale(1, -1) scale(0.023, 0.023)">
