@@ -4,7 +4,7 @@
 {% if page.theme.name == null %}
   {% capture ASSET_PATH %}{{ BASE_PATH }}/assets/themes/clear{% endcapture %}
 {% endif %}
-<title>{{ ASSET_PATH }}*{{ page.title }}{% if page.title != site.title %} {% if page.title != null %} | {% endif %} {{ site.title }}{% endif %}</title>
+<title>{{ page.title }}{% if page.title != site.title %} {% if page.title != null %} | {% endif %} {{ site.title }}{% endif %}</title>
   {% if page.description %}<meta name="description" content="{{ page.description }}" />{% endif %}
   <meta name="author" content="{{ site.author.name }}" />
   <meta http-equiv="content-type" content="text/html;charset=utf-8">
