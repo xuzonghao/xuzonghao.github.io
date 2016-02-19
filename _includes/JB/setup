@@ -2,9 +2,6 @@
   <!--
   - Dynamically set liquid variables for working with URLs/paths
   -->
-  {% if page.theme.name == null %}
-    {% assign page.theme.name = "clear" %}
-  {% endif %}
   {% if site.JB.setup.provider == "custom" %}
     {% include custom/setup %}
   {% else %}
