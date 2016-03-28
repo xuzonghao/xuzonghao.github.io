@@ -1,0 +1,86 @@
+---
+layout: post
+title:  "LVS 1.2.19 install"
+date:   2016-03-28
+categories: LVS
+---
+
+
+# LVS install
+//centos_6.5_x86_2.6.32-431.11.2.el6.toa.2.x86_64
+//Keepalived v1.2.19 (03/28,2016)、support SNMP/SHA1/DEBUG
+//ipvsadm v1.26 2008/5/15 (compiled with popt and IPVS v1.2.1)
+
+```
+// July 07, 2015
+# wget http://www.keepalived.org/software/keepalived-1.2.19.tar.gz
+
+系统是否支持IPVS模块
+# modprobe -l |grep ipvs
+
+系统版本
+# cat /etc/issue
+CentOS release 6.5 (Final)
+
+系统内核版本
+# uname -r
+2.6.32-431.11.2.el6.toa.2.x86_64
+
+ipvsadm版本
+ipvsadm-1.26.tar.gz (for kernel 2.6.28-rc3 or later) - February 8, 2011 
+
+install popt/libnl/popt-static/net-snmp-config
+# rpm -qa | grep popt	
+popt-1.13-7.el6.x86_64
+popt-devel-1.13-7.el6.x86_64
+# rpm -qa | grep libnl    
+libnl-1.1.4-2.el6.x86_64
+libnl-devel-1.1.4-2.el6.x86_64
+# rpm -qa popt-static
+popt-static-1.13-7.el6.x86_64
+# rpm -qa openssl-devel
+# yum install -y net-snmp*
+
+install ipvsadm 1.26
+# wget http://www.linuxvirtualserver.org/software/kernel-2.6/ipvsadm-1.26.tar.gz
+# mkdir -p /usr/src/linux
+# ln -s /usr/src/kernels/2.6.32-431.11.2.el6.toa.2.x86_64/* /usr/src/linux/
+# tar xvf ipvsadm-1.26.tar.gz
+# cd ipvsadm-1.26
+# make && make install
+# /sbin/ipvsadm
+# lsmod|grep ip_vs
+# ipvsadm -v
+
+install keepalived-1.2.19
+//support snmp/sha1/debug
+# cd keepalived-1.2.19
+# ./configure --prefix=/usr/local/keepalived --enable-snmp --enable-sha1 --enable-debug
+Use IPVS Framework       : Yes
+IPVS sync daemon support : Yes
+IPVS use libnl           : Yes
+fwmark socket support    : Yes
+Use VRRP Framework       : Yes
+Use VRRP VMAC            : Yes
+SNMP support             : Yes
+SHA1 support             : Yes
+Use Debug flags          : Yes
+# make && make install
+# /usr/local/keepalived/sbin/keepalived –D   //原始启动方法
+# cp /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/
+# cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
+# cp -a /usr/local/keepalived/etc/keepalived /etc/
+# cp /usr/local/keepalived/sbin/keepalived /usr/sbin/
+# service keepalived restart
+# ps -aux |grep keepalived |grep -v grep
+
+log
+# tail -f /var/log/messages |grep -n Keepalived
+
+config keepalived
+//包含3个文本块：全局定义块、VRRP实例定义块、虚拟服务器定义块
+# more /etc/keepalived/keepalived.conf
+
+ipvsadm look
+# ipvsadm -L -n
+```
