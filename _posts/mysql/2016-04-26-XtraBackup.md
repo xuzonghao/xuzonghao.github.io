@@ -87,7 +87,9 @@ innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  /data1/xtrab
 
 **恢复**
 rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-11 .
-innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back /data1/xtrabackup/2016-04-20_17-26-24
+rm -rf datadir/*    //删除mysql数据目录下所有数据
+mkdir var     //创建空目录
+innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back /data1/xtrabackup/2016-04-20_17-26-24   
 完成后显示innobackupex: completed OK!
 恢复说明：
 innobackupex --user=root --password --defaults-file=/etc/my.cnf  --apply-log /data/back_data/db/  
@@ -95,7 +97,7 @@ innobackupex --user=root --password --defaults-file=/etc/my.cnf  --apply-log /da
 innobackupex --user=root --password --defaults-file=/etc/my.cnf  --copy-back /data/back_data/db/  
 (--copy-back 选项的命令从备份目录拷贝数据,索引,日志到my.cnf文件里规定的初始位置。)
 
-rm -rf datadir/*		//删除mysql数据目录下所有数据
+
 /data1/jira_install/mysql-5.1.57/scripts/mysql_install_db --datadir=/usr/local/mysql/var 		//重置一下datadir
 chown mysql.mysql * -R  //设定权限
 /usr/local/mysql/bin/mysqld_safe &
@@ -115,8 +117,10 @@ innobackupex --user=root --password=** --defaults-file=/etc/my.cnf --databases="
 
 **恢复**
 rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-10 .
+rm -rf datadir/*    //删除mysql数据目录下所有数据
+mkdir var     //创建空目录
 innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back --database="jira4" /data1/xtrabackup/2016-04-20_17-42-11
-rm -rf datadir/*		//删除mysql数据目录下所有数据
+
 /data1/jira_install/mysql-5.1.57/scripts/mysql_install_db --datadir=/usr/local/mysql/var 		//重置一下datadir
 chown mysql.mysql * -R  //设定权限
 /usr/local/mysql/bin/mysqld_safe &
