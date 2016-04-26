@@ -31,6 +31,7 @@ InnoDB可以不停止服务、MyISAM必须锁表停止写入
 ```
 5.5 mysql, 使用2.0版本
 5.0 mysql，使用1.6版本
+同时根据系统版本使用XtraBackup版本
 ```
 
 
