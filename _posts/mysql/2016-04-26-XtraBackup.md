@@ -50,6 +50,8 @@ chmod +x mysql_install_db
 ./mysql_install_db --basedir=/usr/local/mysql --datadir=/usr/local/mysql/var  			//初始化datadir目录
 chown -R mysql:mysql /data1/mysql  		//配置目录权限
 /usr/local/mysql/bin/mysqladmin -uroot password ""			//设置密码
+
+**mysql编译完的安装包可以直接复制到从服务器上使用，但是需要删除datadir下数据并初始化数据且赋给相应权限**
 ```
 
 
