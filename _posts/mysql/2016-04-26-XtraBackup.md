@@ -87,10 +87,11 @@ innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  /data1/xtrab
 将备份完成的数据打包发送到备机
 
 **恢复**
-rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-11 .
+rsync -avzP 10.210.137.217::mysql/mysql .     //同步mysql安装程序，原来的mysql程序可以删除，
+rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-11 .     //同步xtrabackup数据
 rm -rf datadir/*    //删除mysql数据目录下所有数据
 mkdir var     //创建空目录
-innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back /data1/xtrabackup/2016-04-20_17-26-24   
+innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back /data1/xtrabackup/2016-04-20_17-26-24   //执行之前保证mysql为启动状态，并密码正确
 完成后显示innobackupex: completed OK!
 恢复说明：
 innobackupex --user=root --password --defaults-file=/etc/my.cnf  --apply-log /data/back_data/db/  
@@ -117,10 +118,11 @@ innobackupex --user=root --password=** --defaults-file=/etc/my.cnf --databases="
 
 
 **恢复**
-rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-10 .
+rsync -avzP 10.210.137.217::mysql/mysql .     //同步mysql安装程序，原来的mysql程序可以删除，
+rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-10 .     //同步xtrabackup数据
 rm -rf datadir/*    //删除mysql数据目录下所有数据
 mkdir var     //创建空目录
-innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back --database="jira4" /data1/xtrabackup/2016-04-20_17-42-11
+innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back --database="jira4" /data1/xtrabackup/2016-04-20_17-42-11    //执行之前保证mysql为启动状态且datadir目录为空，并密码正确
 
 /data1/jira_install/mysql-5.1.57/scripts/mysql_install_db --datadir=/usr/local/mysql/var 		//重置一下datadir
 chown mysql.mysql * -R  //设定权限
@@ -128,6 +130,17 @@ chown mysql.mysql * -R  //设定权限
 
 测试mysql是否可以重启
 mysqladmin shutdown -uroot && /usr/local/mysql/bin/mysqld_safe &
+```
+
+
+# 测试mysql是否可以使用
+
+```
+/usr/local/mysql/bin/mysql -h   //如果报错如下，说明确实lib
+/usr/local/mysql/bin/mysql: error while loading shared libraries: libtinfo.so.5: cannot open shared object file: No such file or directory
+ln -s libtinfo.so.5.7 libtinfo.so.5
+ll /lib64/libtinfo.so.5
+lrwxrwxrwx 1 root root 15 Apr 27 13:18 /lib64/libtinfo.so.5 -> libtinfo.so.5.7
 ```
 
 
