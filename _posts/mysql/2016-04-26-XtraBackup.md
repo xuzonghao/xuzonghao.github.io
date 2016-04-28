@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "使用XtraBackup进行热备、恢复、主从恢复"
+title:  "使用XtraBackup对Mysql热备、恢复、主从恢复"
 date:   2016-04-26
 categories: DBA
 ---
