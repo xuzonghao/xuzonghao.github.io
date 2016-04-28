@@ -88,10 +88,11 @@ innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  /data1/xtrab
 
 **恢复**
 rsync -avzP 10.210.137.217::mysql/mysql .     //同步mysql安装程序，原来的mysql程序可以删除，
-rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-11 .     //同步xtrabackup数据
+tar -izxvf *.tar.gz    //将同步的xtrabakcup压缩文件进行解压，注意：一定要加i参数，否则无法成功恢复
 rm -rf datadir/*    //删除mysql数据目录下所有数据
-mkdir var     //创建空目录
-innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back /data1/xtrabackup/2016-04-20_17-26-24   //执行之前保证mysql为启动状态，并密码正确
+mkdir var     //创建空目录，如果存在不需创建
+innobackupex --user=root --defaults-file=/etc/my.cnf  --copy-back /data1/xtrabackup/2016-04-20_17-26-24   
+//一般不需要密码
 完成后显示innobackupex: completed OK!
 恢复说明：
 innobackupex --user=root --password --defaults-file=/etc/my.cnf  --apply-log /data/back_data/db/  
@@ -113,16 +114,16 @@ mysqladmin shutdown -uroot && /usr/local/mysql/bin/mysqld_safe &
 
 ```
 **备份**
-innobackupex --user=root --password=** --defaults-file=/etc/my.cnf --databases="jira4" /data1/xtrabackup
+innobackupex --user=root --password=** --defaults-file=/etc/my.cnf --databases=jira4 /data1/xtrabackup
 将备份完成的数据打包发送到备机
 
 
 **恢复**
 rsync -avzP 10.210.137.217::mysql/mysql .     //同步mysql安装程序，原来的mysql程序可以删除，
-rsync -avzP 10.210.137.217::jira/data1/xtrabackup/2016-04-26_17-42-10 .     //同步xtrabackup数据
+tar -izxvf *.tar.gz    //将同步的xtrabakcup压缩文件进行解压，注意：一定要加i参数，否则无法成功恢复
 rm -rf datadir/*    //删除mysql数据目录下所有数据
-mkdir var     //创建空目录
-innobackupex --user=root --password=** --defaults-file=/etc/my.cnf  --copy-back --database="jira4" /data1/xtrabackup/2016-04-20_17-42-11    //执行之前保证mysql为启动状态且datadir目录为空，并密码正确
+mkdir var     //创建空目录，如果存在不需创建
+innobackupex --user=root --defaults-file=/etc/my.cnf  --copy-back --database=jira4 /data1/xtrabackup/2016-04-20_17-42-11    //执行之前保证mysql为启动状态且datadir目录为空，一般不需要密码，因为数据目录被删除
 
 /data1/jira_install/mysql-5.1.57/scripts/mysql_install_db --datadir=/usr/local/mysql/var 		//重置一下datadir
 chown mysql.mysql * -R  //设定权限
@@ -159,7 +160,7 @@ compact = 0
 最后看这个文件：
 # cat /data1/2016-04-20_17-26-24/xtrabackup_binlog_info 
 cat xtrabackup_binlog_info
-mysql-bin.000017        41757311        jira4			//在从服务器上需要用到此信息
+mysql-bin.000017        79904816        jira4			//在从服务器上需要用到此信息
 
 ```
 
@@ -202,9 +203,9 @@ mysql> show slave status\G
 **从开启相应权限并设置同步**
 mysql> change master to master_host='10.210.137.217',
 master_user='sync', 
-master_password='',
+master_password=',
 master_log_file='mysql-bin.000017', 
-master_log_pos=41757311,
+master_log_pos=79904816,
 master_port=3306;
 mysql> slave start;
 mysql> flush privileges;
@@ -333,4 +334,148 @@ read_buffer = 2M
 write_buffer = 2M
 [mysqlhotcopy]
 interactive-timeout
+log-slave-updates
 ```
+
+
+
+# mysql主从知识
+
+```
+MySQL主从复制几个重要的启动选项
+　　(1)　 log-slave-updates
+　　log-slave-updates这个参数用来配置从服务器的更新是否写入二进制日志，这个选项默认是不打开的，但是，如果这个从服务器B是服务器A的从服务器，同时还作为服务器C的主服务器，那么就需要开发这个选项，这样它的从服务器C才能获得它的二进制日志进行同步操作
+　　(2)　 master-connect-retry
+　　master-connect-retry这个参数是用来设置在和主服务器连接丢失的时候，重试的时间间隔，默认是60秒
+　　(3)　 read-only
+　　read-only是用来限制普通用户对从数据库的更新操作，以确保从数据库的安全性，不过如果是超级用户依然可以对从数据库进行更新操作
+　　(4)　 slave-skip-errors
+　　在复制过程中，由于各种的原因，从服务器可能会遇到执行BINLOG中的SQL出错的情况，在默认情况下，服务器会停止复制进程，不再进行同步，等到用户自行来处理。
+　　Slave-skip-errors的作用就是用来定义复制过程中从服务器可以自动跳过的错误号，当复制过程中遇到定义的错误号，就可以自动跳过，直接执行后面的SQL语句。
+　　--slave-skip-errors=[err1,err2,…….|ALL]
+　　但必须注意的是，启动这个参数，如果处理不当，很可能造成主从数据库的数据不同步，在应用中需要根据实际情况，如果对数据完整性要求不是很严格，那么这个选项确实可以减轻维护的成本
+
+```
+
+
+
+# 其他说明
+
+## 进行备份
+
+### 说明
+
+```
+innobackupex是我们要使用的备份工具；
+
+xtrabackup是被封装在innobackupex之中的，innobackupex运行时需要调用它；
+
+xtrabackup_51是xtrabackup运行时需要调用的工具；
+
+tar4ibd是以tar流的形式产生备份时用来打包的工具。
+```
+
+
+### 完整备份
+
+```
+innobackupex --user=root --password=MySQLPASSWORD --defaults-file=/etc/my.cnf --database=test /mysqlbackup/  
+其中，--user指定连接数据库的用户名，--password指定连接数据库的密码，--defaults-file指定数据库的配置文件，innobackupex要从其中获取datadir等信息；--database指定要备份的数据库，这里指定的数据库只对MyISAM表和InnoDB表的表结构有效，对于InnoDB 数据来说都是全备（所有数据库中的InnoDB数据都进行了备份，不是只备份指定的数据库，恢复时也一样）；/mysqlbackup是备份文件的存放位置。
+```
+
+### 完整备份并打包
+
+```
+innobackupex --user=root --password=MySQLPASSWORD --defaults-file=/etc/my.cnf --database=test --stream=tar /mysqlbackup > /mysqlbackup/dbbackup20110809.tar
+--stream指定流的格式，目前只支持tar
+```
+
+### 完整备份并打包压缩
+
+```
+innobackupex --user=root --password=MySQLPASSWORD --defaults-file=/etc/my.cnf --database=test --stream=tar /mysqlbackup/ | gzip /mysqlbackup/dbbackup20110809.tar.gz
+```
+
+
+### 完整备份到远程主机
+
+```
+innobackupex --user=root --password= MySQLPASSWORD --defaults-file=/etc/my.cnf --database=test --stream=tar /mysqlbackup | ssh root@remote-host cat ">"   /mysqlbackup/dbbackup20110809.tar
+```
+
+
+### 增量备份
+
+```
+innobackupex --user=root --password=MySQLPASSWORD --database=test --incremental --incremental-basedir=/mysqlbackup/2011-08-09_14-50-20/ /mysqlbackup/trn/
+--incremental指明是增量备份，--incremental-basedir指定上次完整备份或者增量备份文件的位置。这里的增量备份其实只针对的是InnoDB，对于MyISAM来说，还是完整备份
+```
+
+
+
+## 进行恢复
+ 
+### 完整备份恢复
+
+```
+在进行恢复前，如果完整备份在远程主机上，首先将完整备份复制到本地主机上，如果是tar包，则需要先解包，解包命令为：tar -izxvf dbbackup20110809.tar，这里必须使用-i参数。然后停止mysql数据库并删除欲恢复的数据库文件夹
+service mysql stop  
+rm /data0/mysql/var -rf
+
+然后将备份文件中的日志应用到备份文件中的数据文件上
+innobackupex --user=root --password=MySQLPASSWORD --apply-log /mysqlbackup/full/2011-08-09_14-50-20/ 
+
+这里的--apply-log指明是将日志应用到数据文件上，完成之后将备份文件中的数据恢复到数据库中
+innobackupex --user=root --password=MySQLPASSWORD --copy-back /mysqlbackup/full/2011-08-09_14-50-20/
+这里的—copy-back指明是进行数据恢复。数据恢复完成之后，需要修改相关文件的权限mysql数据库才能正常启动
+
+chown mysql:mysql -R * /data0/mysql/var
+service mysql start
+
+注意：虽然指定的是test数据库，但实际上如果其他数据库中也有InnoDB表，那么这些InnoDB表中的数据也会被恢复了。
+```
+
+### 增量备份恢复
+
+```
+增量备份恢复的步骤和完整备份恢复的步骤基本一致，只是应用日志的过程稍有不同。增量备份恢复时，是先将所有的增量备份挨个应用到完整备份的数据文件中，然后再将完整备份中的数据恢复到数据库中。
+
+应用第一个增量备份
+innobackupex --user=root --password=MySQLPASSWORD --defaults-file=/etc/my.cnf --apply-log /mysqlbackup/full/2011-08-09_14-50-20/ --incremental-dir=/mysqlbackup/trn/2011-08-09_15-12-43/  
+
+应用第二个增量备份
+innobackupex --user=root --password=MySQLPASSWORD --defaults-file=/etc/my.cnf --apply-log /mysqlbackup/full/2011-08-09_14-50-20/ --incremental-dir=/mysqlbackup/trn/2011-08-05_15-15-47/  
+
+
+将完整备份中的数据恢复到数据库中
+innobackupex --user=root --password=MySQLPASSWORD --defaults-file=/etc/my.cnf --copy-back /mysqlbackup/full/2011-08-05_14-50-20/  
+其中，--incremental-dir指定要恢复的增量备份的位置
+```
+
+
+### 相关原理
+
+```
+完整备份的原理：
+
+对于InnoDB，XtraBackup基于InnoDB的crash-recovery功能进行备份。
+
+crash-recovery是这样的：InnoDB维护了一个redo log，又称为 transaction log，也叫事务日志，它包含了InnoDB数据的所有改动情况。InnoDB启动的时候先去检查datafile和transaction log，然后应用所有已提交的事务并回滚所有未提交的事务。
+
+XtraBackup在备份的时候并不锁定表，而是一页一页地复制InnoDB的数据，与此同时，XtraBackup还有另外一个线程监视着transactions log，一旦log发生变化，就把变化过的log pages复制走(因为transactions log文件大小有限，写满之后，就会从头再开始写，新数据可能会覆盖到旧的数据，所以一旦变化就要立刻复制走）。在全部数据文件复制完成之后，停止复制logfile。
+
+XtraBackup采用了其内置的InnoDB库以read-write模式打开InnoDB的数据文件，然后每次读写1MB(1MB/16KB=64page)的数据，一页一页地遍历，同时用InnoDB的buf_page_is_corrupted()函数检查此页的数据是否正常，如果正常则进行复制，如不正常则重新读取，最多重读10次，如果还是失败，则备份失败退出。复制transactions log的原理也是一样的，只不过每次读写512KB(512KB/16KB=32page)的数据。
+
+由于XtraBackup其内置的InnoDB库打开文件的时候是rw的，所以运行XtraBackup的用户，必须对InnoDB的数据文件具有读写权限。
+
+由于XtraBackup要从文件系统中复制大量的数据，所以它尽可能地使用posix_fadvise()，来告诉OS不要缓存读取到的数据(因为这些数据不会重用到了)，从而提升性能。如果要缓存的话，大量的数据会对OS的虚拟内存造成很大的压力，其它进程（如mysqld）很有可能会被swap出去，这样就出问题了。同时，XtraBackup在读取数据的时候还尽可能地预读。
+
+由于不锁表，所以复制出来的数据是不一致的，数据的一致性是在恢复的时候使用crash-recovery进行实现的。
+
+对于MyISAM,XtraBackup还是首先锁定所有的表，然后复制所有文件。
+
+增量备份的原理：
+
+在完整备份和增量备份文件中都有一个文件xtrabackup_checkpoints会记录备份完成时检查点的LSN。在进行新的增量备份时，XtraBackup会比较表空间中每页的LSN是否大于上次备份完成的LSN，如果是，则备份该页，并记录当前检查点的LSN。
+```
+
