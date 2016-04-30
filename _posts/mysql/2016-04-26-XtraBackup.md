@@ -91,6 +91,18 @@ rsync -avzP 10.210.137.217::mysql/mysql .     //同步mysql安装程序，原来
 tar -izxvf *.tar.gz    //将同步的xtrabakcup压缩文件进行解压，注意：一定要加i参数，否则无法成功恢复
 rm -rf datadir/*    //删除mysql数据目录下所有数据
 mkdir var     //创建空目录，如果存在不需创建
+
+innobackupex --user=root --apply-log /data1/xtrabackup/2016-04-20_17-26-24  
+//然后将备份文件中的日志应用到备份文件中的数据文件上,如果不操作此步骤，会报错如下：
+InnoDB: time but the database was not shut down
+InnoDB: normally after that.
+160430 23:08:21 [ERROR] Plugin 'InnoDB' init function returned error.
+160430 23:08:21 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
+160430 23:08:21 [ERROR] Unknown/unsupported table type: innodb
+160430 23:08:21 [ERROR] Aborting
+160430 23:08:21 [Note] /data0/mysql/libexec/mysqld: Shutdown complete
+160430 23:08:21 mysqld_safe mysqld from pid file /usr/local/mysql/var/localhost.localdomain.pid ended
+
 innobackupex --user=root --defaults-file=/etc/my.cnf  --copy-back /data1/xtrabackup/2016-04-20_17-26-24   
 //一般不需要密码
 完成后显示innobackupex: completed OK!
@@ -123,6 +135,18 @@ rsync -avzP 10.210.137.217::mysql/mysql .     //同步mysql安装程序，原来
 tar -izxvf *.tar.gz    //将同步的xtrabakcup压缩文件进行解压，注意：一定要加i参数，否则无法成功恢复
 rm -rf datadir/*    //删除mysql数据目录下所有数据
 mkdir var     //创建空目录，如果存在不需创建
+
+innobackupex --user=root --apply-log /data1/xtrabackup/2016-04-20_17-42-11
+//然后将备份文件中的日志应用到备份文件中的数据文件上,如果不操作此步骤，会报错如下：
+InnoDB: time but the database was not shut down
+InnoDB: normally after that.
+160430 23:08:21 [ERROR] Plugin 'InnoDB' init function returned error.
+160430 23:08:21 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
+160430 23:08:21 [ERROR] Unknown/unsupported table type: innodb
+160430 23:08:21 [ERROR] Aborting
+160430 23:08:21 [Note] /data0/mysql/libexec/mysqld: Shutdown complete
+160430 23:08:21 mysqld_safe mysqld from pid file /usr/local/mysql/var/localhost.localdomain.pid ended
+
 innobackupex --user=root --defaults-file=/etc/my.cnf  --copy-back --database=jira4 /data1/xtrabackup/2016-04-20_17-42-11    //执行之前保证mysql为启动状态且datadir目录为空，一般不需要密码，因为数据目录被删除
 
 /data1/jira_install/mysql-5.1.57/scripts/mysql_install_db --datadir=/usr/local/mysql/var 		//重置一下datadir
@@ -424,8 +448,8 @@ rm /data0/mysql/var -rf
 
 然后将备份文件中的日志应用到备份文件中的数据文件上
 innobackupex --user=root --password=MySQLPASSWORD --apply-log /mysqlbackup/full/2011-08-09_14-50-20/ 
-
 这里的--apply-log指明是将日志应用到数据文件上，完成之后将备份文件中的数据恢复到数据库中
+
 innobackupex --user=root --password=MySQLPASSWORD --copy-back /mysqlbackup/full/2011-08-09_14-50-20/
 这里的—copy-back指明是进行数据恢复。数据恢复完成之后，需要修改相关文件的权限mysql数据库才能正常启动
 
