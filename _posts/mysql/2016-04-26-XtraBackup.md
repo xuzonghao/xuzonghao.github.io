@@ -227,7 +227,7 @@ mysql> show slave status\G
 **从开启相应权限并设置同步**
 mysql> change master to master_host='10.210.137.217',
 master_user='sync', 
-master_password=',
+master_password='',
 master_log_file='mysql-bin.000017', 
 master_log_pos=79904816,
 master_port=3306;
