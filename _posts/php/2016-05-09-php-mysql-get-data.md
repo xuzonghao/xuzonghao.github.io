@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "使用php-mysql获取mysql数据库数据并展示"
-date:   2016-05-09
+date:   2016-05-10
 categories: php
 ---
 
