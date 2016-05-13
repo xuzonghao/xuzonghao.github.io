@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "使用array处理xml获取运营商"
+title:  "使用array处理xml获取isp"
 date:   2016-05-13
 categories: php
 ---
@@ -302,10 +302,17 @@ echo preg_replace($pattern, $replacement, $contents);
 
 ```
 <?php
-$xml = simplexml_load_file("isp.xml");
-$xml = (array)$xml;
-foreach ($xml['entry'] as $iter) {
-	echo $iter->name."\n";
+$xml = "isp.xml";
+if(file_exists($xml)){
+	$xml = simplexml_load_file($xml);
+	// print_r($xml);
+	$xml = (array)$xml;
+	// print_r($xml);
+	foreach ($xml['entry'] as $iter) {
+		echo $iter->name."\n";
+	}
+}else {
+	exit('failed to open $xml');
 }
 ?>
 ```
