@@ -5,7 +5,7 @@ date:   2016-05-30
 categories: script
 ---
 
-
+```
 <?php
 function FindProxyForURL(url, host)
 {
@@ -101,4 +101,4 @@ if (shExpMatch(url, "*.google*.com*")||
 else  
     return "DIRECT";
 }
-
+```
