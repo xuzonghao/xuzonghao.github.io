@@ -55,24 +55,6 @@ root     23976     1  0 04:06 ?        00:02:14 /usr/local/java/bin/java -Djava.
 # lsof -p 23976|wc -l 		//查看当前进程id为23976的 文件操作数
 2779
 
-[root@10.210.137.50|10.210.128.57| 08:41 ~]
-# ulimit -a 			//查看每个用户允许打开的最大文件数,默认是1024
-core file size          (blocks, -c) 0
-data seg size           (kbytes, -d) unlimited
-scheduling priority             (-e) 0
-file size               (blocks, -f) unlimited
-pending signals                 (-i) 1032073
-max locked memory       (kbytes, -l) 64
-max memory size         (kbytes, -m) unlimited
-open files                      (-n) 1024
-pipe size            (512 bytes, -p) 8
-POSIX message queues     (bytes, -q) 819200
-real-time priority              (-r) 0
-stack size              (kbytes, -s) 10240
-cpu time               (seconds, -t) unlimited
-max user processes              (-u) 1032073
-virtual memory          (kbytes, -v) unlimited
-file locks                      (-x) unlimited
 
 
 [root@10.210.137.50|10.210.128.57| 08:43 ~]
