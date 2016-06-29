@@ -60,6 +60,7 @@ categories: apache-php
 主程序：
 复制apache.tar.gz 到/usr/local/解压生成apache目录
 配置httpd.conf：
+LoadModule php5_module modules/libphp5.so 
 AddType application/x-httpd-php .php .phtml .php3 .inc
 模块：apachectl -t -D DUMP_MODULES
 
