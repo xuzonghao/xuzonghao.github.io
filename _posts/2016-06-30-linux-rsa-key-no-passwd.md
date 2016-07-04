@@ -35,20 +35,12 @@ ssh-keygen:生成秘钥
   -t指定算法
   -f 指定生成秘钥路径
   -N 指定密码
+
+将秘钥传送到b服务器
+ssh-copy-id root@10.210.128.173
 ```
 
-
-# b服务器
-
-```
-将公钥复制到被管理机器下的.ssh目录下（先确保存在这个目录）
-mkdir .ssh && chmod 700 .ssh && cd .ssh
-将管理机id_rsa.pub传输到本机.ssh下
-cat id_rsa.pub >> ~/.ssh/authorized_keys 
-chmod 600 authorized_keys && cd ..
-```
-
-# 主机验证
+# 验证
 
 ```
 ssh 10.210.128.193 
@@ -63,4 +55,9 @@ ssh 10.210.128.193
   2> 认证文件一定要采用追加方式：cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
   3> authorized_keys文件的权限一定要修改为600
   4> .ssh的文件如果是手动创建的话权限一定要修改为700 
+
+已经认证的服务器
+cat /root/.ssh/known_hosts 
+10.210.128.173 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAysQpokwa5j89pxmxfZU65yoCATKSvWbx/SBAz3JL1M3FjCaFXydSXmIQ/+548TNdT9xw9hY0R7LnmcjMNjZAFZ85pMTIe+LT3oKNZ34g0Opqskq/yjfz9esevpQvTQD14Gt47dvri+lcsDUmOsQpITENTHMAi/wznWZhvg07rWNkDOjnysrQzqNOA7AI7iP1NCq8J5JyH9hsQrdowEXKEEfvItlZvjjmXC3NZ/wkgsRscRRveM0kUuDmpBv2qezZbpgU0tkeJKkqPSOUqelKLri5g5ajBd5J1S2sTmjzdENpKlbnyq4WHUUkHFafLpegrb3n6VW8Kg6JAQ+znvO4sw==
+10.210.128.169 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAysQpokwa5j89pxmxfZU65yoCATKSvWbx/SBAz3JL1M3FjCaFXydSXmIQ/+548TNdT9xw9hY0R7LnmcjMNjZAFZ85pMTIe+LT3oKNZ34g0Opqskq/yjfz9esevpQvTQD14Gt47dvri+lcsDUmOsQpITENTHMAi/wznWZhvg07rWNkDOjnysrQzqNOA7AI7iP1NCq8J5JyH9hsQrdowEXKEEfvItlZvjjmXC3NZ/wkgsRscRRveM0kUuDmpBv2qezZbpgU0tkeJKkqPSOUqelKLri5g5ajBd5J1S2sTmjzdENpKlbnyq4WHUUkHFafLpegrb3n6VW8Kg6JAQ+znvO4sw==
 ```
