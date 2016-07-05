@@ -82,3 +82,16 @@ PATH=$PATH:$HOME/bin:/usr/local/php/bin:/usr/local/apache/bin
 
 ```
 
+
+# apache重启说明
+
+```
+configtest   检查设置文件中的语法是否正确。用于修改了配置文件后进行测试是否有误。
+fullstatus   显示服务器完整的状态信息。
+graceful   重新启动Apache服务器，但不会中断原有的连接。用于修改了配置文件后进行重新读取配置文件。
+help   显示帮助信息。
+restart   重新启动Apache服务器。 = httpd -k restart
+start   启动Apache服务器。
+status   显示服务器摘要的状态信息。
+stop   停止Apache服务器。
+```
