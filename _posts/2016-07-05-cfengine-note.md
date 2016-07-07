@@ -50,23 +50,50 @@ cfagent.conf 到 /var/cfengine/inputs
 cfservd.conf 到 /data0/cfengine/conf/
 
 启动
- /usr/local/cfengine/sbin/cfservd -f -n /data0/cfengine/conf/cfservd.conf
+cfkey
+/usr/local/cfengine/sbin/cfservd -f /data0/cfengine/conf/cfservd.conf
 
 
 客户端手动同步
+cfkey
 update.conf 到 /usr/local/cfengine
 /usr/local/cfengine/sbin/cfagent -qvv -f /usr/local/cfengine/update.conf
+或
+update.conf 到 /var/cfengine/inputs/
+/var/cfengine/bin/cfagent -qvv  同时会起来 /var/cfengine/bin/cfexecd 守护进程
 
 客户端守护执行
-/var/cfengine/bin/cfexecd
+/var/cfengine/bin/cfexecd  根据SplayTime来同步
 ```
 
 
 # 排错
 
 ```
-如果出现bad key问题
+对client而言，首先查看本机的update.conf文件
+/var/cfengine/inputs/update.conf 
 
-在服务端/var/cfengine/ppkeys删除root开头的key文件
+按照/var/cfengine/inputs/cfagent.conf定义的策略去执行
+
+排错
+1、BAD KEY
+需要在server端上删掉root-服务器IP.pub，或者-服务器ip.pub（可能有）文件
+服务器上的/var/cfengine/ppkeys目录
+
+2、认证失败 au……failed的错
+需要在client端的/etc/hosts里增加
+180.149.153.135        localhost.localdomain localhost
+
+3、5308不通
+需要在server端的/data0/cfengine/conf/cfservd.conf文件中增加权限，加4个地方
+
+4、cfagent的锁处理
+清理锁
+ps -ef|grep cf
+杀掉所有和cf相关的进程
+cd /var/cfengine
+删掉所有的文件，保留必要的部分
+rm -fr ./[!bip]*
+执行/var/cfengine/bin/cfagent -qvvv
 
 ```
