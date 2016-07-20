@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "在Linux上按国别阻止网络流量"
+title:  "使用iptables，按国别阻止网络流量"
 date:   2016-07-20
 categories: iptables
 ---
