@@ -11,7 +11,7 @@ categories: tomcat
 # tomcat的内存使用配置,最大连接数配置。
 
 ```
-如何修改配置呢，在/tomcat的/bin/下面有个这个脚本文件。catailna.sh 脚本文件。 如果windows 是bat设置tomcat的使用内存，也其实就是设置jim的使用参数。
+如何修改配置呢，在/tomcat的/bin/下面有个这个脚本文件。catailna.sh 脚本文件。 如果windows 是bat设置tomcat的使用内存，也其实就是设置jvm的使用参数。
 ```
 
 # 一.Tomcat内存优化
