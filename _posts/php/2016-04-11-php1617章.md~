@@ -225,8 +225,8 @@ if($sendmail){
 header("Content-Type: text/html;charset=utf-8");
 $smtpserver = "smtp.126.com";
 $smtpserverport = 25;
-$smtpuermail = "xuhao@i9soo.com";
-$smtpemailto = "cc@i9soo.com";
+$smtpuermail = "xuzonghao@126.com";
+$smtpemailto = "zonghao1@staff.sina.com.cn";
 $smtpuser = "";
 $smtppass = "";
 $mailsubject = "测试邮件";
