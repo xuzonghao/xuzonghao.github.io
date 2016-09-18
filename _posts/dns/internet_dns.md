@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Dns"
+title:  "内网dns"
 date:   2016-04-09
 categories: Dns
 ---
